@@ -15,24 +15,31 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Read package.json
+    - name: Get version from package.json
       uses: tyankatsu0105/read-package-version-actions@v1
-      id: package-version
+      id: appversion
     
     - name: Show version number
-      run: echo "Version is ${{ steps.package-version.outputs.version }}"
+      run: echo "Version is ${{ steps.appversion.outputs.version }}"
       
-    - name: NPM Test
-      run: | 
-        npm install 
-        npm run build --if-present
-        npm test
+#     - name: NPM Test
+#       run: | 
+#         npm install 
+#         npm run build --if-present
+#         npm test
     
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}"/hello-world-js:"${{ steps.package-version.version }}"
+#     - name: Build the Docker image
+#       run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.version }}"
 
-    - name: Login to Docker Hub
-      run: docker login --username "${{ secrets.Docker_username }}" --password "${{ secrets.Docker_password }}"
+#     - name: Login to Docker Hub
+#       run: docker login --username "${{ secrets.Docker_username }}" --password "${{ secrets.Docker_password }}"
+
+#     - name: Publish to Registry
+#       uses: HurricanKai/Publish-Docker-Github-Action@master
+#       with:
+#         name: myDocker/repository
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
 
       env:
         DEV: true
