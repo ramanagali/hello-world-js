@@ -17,4 +17,4 @@ USER node
 
 # Make port 8080 accessible outside of the container
 EXPOSE 8080
-CMD "npm" "start"
+CMD ["npm", "start"]
