@@ -1,12 +1,12 @@
 'use strict';
 const express = require('express');
 const PORT = 3000;
-const HOST = '0.0.0.0';
+const HOST = 'localhost';
 
 const app = express();
 app.get('/', (_, res) => {
   res.send({
-    message: "Hello World NodeJs!",
+    message: "Hello World NodeJs",
   });
 });
 
