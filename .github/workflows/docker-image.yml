@@ -28,8 +28,8 @@ jobs:
 #         npm run build --if-present
 #         npm test
     
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.version }}"
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{steps.appversion.outputs.tag}}
 
 #     - name: Login to Docker Hub
 #       run: docker login --username "${{ secrets.Docker_username }}" --password "${{ secrets.Docker_password }}"
