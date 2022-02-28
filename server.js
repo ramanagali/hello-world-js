@@ -1,11 +1,17 @@
 'use strict';
 
-const http = require('http');
-const handleRequest = function (req, res) {
-  res.writeHead(200);
-  res.end('<h1> Hello Kubernetes! - its v1 </h1>');
-};
-const www = http.createServer(handleRequest);
-www.listen(process.env.PORT || 8080);
+const express = require('express');
 
-module.exports = www;
+const PORT = 8080;
+const HOST = '127.0.0.0';
+
+const app = express();
+app.get('/', (_, res) => {
+  res.send({
+    message: "Hello World NodeJs!",
+  });
+});
+
+const server = app.listen(PORT, HOST, () => {
+  console.log(`Running on http://${HOST}:${PORT}`);
+});
