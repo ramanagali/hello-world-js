@@ -16,14 +16,23 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Read package.json
-      #uses: tyankatsu0105/read-package-version-actions@v1
+      uses: tyankatsu0105/read-package-version-actions@v1
       id: package-version
     
     - name: Show version number
       run: echo "Version is ${{ steps.package-version.outputs.version }}"
       
+    - name: NPM Test
+      run: | 
+        npm install 
+        npm run build -if-present
+        npm test
+    
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}"/hello-world-js:"${{ steps.package-version.version }}"
+
+    - name: Login to Docker Hub
+      run: docker login --username "${{ secrets.Docker_username }}" --password "${{ secrets.Docker_password }}"
 
       env:
         DEV: true
