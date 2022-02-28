@@ -25,7 +25,7 @@ jobs:
     - name: NPM Test
       run: | 
         npm install 
-        npm run build -if-present
+        npm run build --if-present
         npm test
     
     - name: Build the Docker image
