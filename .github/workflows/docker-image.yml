@@ -16,14 +16,14 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Read package.json
-      uses: tyankatsu0105/read-package-version-actions@v1
+      #uses: tyankatsu0105/read-package-version-actions@v1
       id: package-version
     
     - name: Show version number
       run: echo "Version is ${{ steps.package-version.outputs.version }}"
       
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.package-version.version }}"
+      run: docker build . --file Dockerfile --tag "${{ secrets.DOCKER_USERNAME }}"/hello-world-js:"${{ steps.package-version.version }}"
 
       env:
         DEV: true
