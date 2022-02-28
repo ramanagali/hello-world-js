@@ -23,7 +23,7 @@ jobs:
       run: echo "Version is ${{ steps.package-version.outputs.version }}"
       
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag hello-world-js:$(steps.package-version.version)
+      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.package-version.version }}
 
       env:
         DEV: true
