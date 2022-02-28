@@ -16,5 +16,5 @@ RUN npm ci --only=production
 USER node
 
 # Make port 8080 accessible outside of the container
-EXPOSE 3000
+EXPOSE 8080
 CMD "npm" "start"
