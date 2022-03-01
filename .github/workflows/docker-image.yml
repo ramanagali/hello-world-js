@@ -2,47 +2,46 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Get version from package.json
-      uses: tyankatsu0105/read-package-version-actions@v1
-      id: appversion
-    
-    - name: Show version number
-      run: echo "Version is ${{ steps.appversion.outputs.version }}"
-      
-#     - name: NPM Test
-#       run: | 
-#         npm install 
-#         npm run build --if-present
-#         npm test
-    
-    - name: Login to DockerHub Registry
-      run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - uses: actions/checkout@v2
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
+      - name: Get version from package.json
+        uses: tyankatsu0105/read-package-version-actions@v1
+        id: appversion
 
-    - name: Push the tagged Docker image
-      run: docker push ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
+      - name: Show version number
+        run: echo "Version is ${{ steps.appversion.outputs.version }}"
 
-#     - name: Login to Docker Hub
-#       run: docker login --username "${{ secrets.Docker_username }}" --password "${{ secrets.Docker_password }}"
+      #     - name: NPM Test
+      #       run: |
+      #         npm install
+      #         npm run build --if-present
+      #         npm test
 
-#     - name: Publish to Registry
-#       uses: HurricanKai/Publish-Docker-Github-Action@master
-#       with:
-#         name: myDocker/repository
-#         username: ${{ secrets.DOCKER_USERNAME }}
-#         password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
+
+      - name: Push the tagged Docker image
+        run: docker push ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
+
+      - name: Setup Minikube
+        uses: manusa/actions-setup-minikube@v2.4.3
+        with:
+          minikube version: "v1.25.1"
+          kubernetes version: "v1.23.4"
+          # github token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Interact with the cluster
+        run: |
+          kubectl get nodes
+          kubectl get po -A
