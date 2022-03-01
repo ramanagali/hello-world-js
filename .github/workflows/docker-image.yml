@@ -46,4 +46,8 @@ jobs:
           kubectl get nodes
           kubectl get po -A
       - name: Deploy to minikube
-        run: kubectl apply -f deploy1.yaml
+        run: kubectl apply -f ./k8s-resources/deploy1.yaml
+
+      - name: Check deploy
+        run: |
+          kubectl get deploy -o wide
