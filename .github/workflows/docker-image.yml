@@ -58,4 +58,6 @@ jobs:
 
       - name: Check deploy
         run: |
-          kubectl get deploy -o wide
+          kubectl get no -o wide
+          kubectl get svc -o wide
+          kubectl get ep -o wide
