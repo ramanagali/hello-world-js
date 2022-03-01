@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: gvr
+  name: gvr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gvr
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: gvr
+    spec:
+      containers:
+        - image: ramanagali/hello-world-js:1.1.0
+          name: hello-world-js
+          resources: {}
