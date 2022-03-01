@@ -1,7 +1,6 @@
 'use strict';
 const express = require('express');
 const PORT = 3000;
-const HOST = '0.0.0.0';
 
 const app = express();
 app.get('/', (_, res) => {
@@ -10,6 +9,6 @@ app.get('/', (_, res) => {
     version: process.env.npm_package_version,
   });
 });
-const server = app.listen(PORT, HOST, () => {
-  console.log(`Running on http://${HOST}:${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`Running on http://localhost:${PORT}`);
 });
