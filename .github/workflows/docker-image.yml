@@ -22,7 +22,7 @@ jobs:
 
       - name: NPM Test
         run: |
-          npm run
+          npm start
           npm test
 
       # - name: Login to DockerHub Registry
