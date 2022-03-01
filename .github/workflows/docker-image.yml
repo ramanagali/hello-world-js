@@ -66,6 +66,4 @@ jobs:
 
       - name: test hello-world
         run: |
-          HW-IP=kubectl get ep hello-world-svc -o jsonpath="{.subsets[0].addresses[0].ip}"
-          HW-PORT=kubectl get ep hello-world-svc -o jsonpath="{.subsets[0].ports[0].port}"
-          curl HW-IP:HW-PORT
+          curl $(kubectl get svc hello-world-svc -o jsonpath='{.spec.clusterIP}'): $(kubectl get svc hello-world-svc -o jsonpath='{.spec.ports[0].port}')
