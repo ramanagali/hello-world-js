@@ -41,12 +41,21 @@ jobs:
           minikube version: "v1.25.1"
           kubernetes version: "v1.23.4"
           # github token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Sleep for 20 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "20s"
       - name: Interact with the cluster
         run: |
           kubectl get nodes
           kubectl get po -A
-      - name: Deploy to minikube
+      - name: Deployment to minikube cluster
         run: kubectl apply -f ./k8s-resources/deploy1.yaml
+
+      - name: Sleep for 10 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "10s"
 
       - name: Check deploy
         run: |
