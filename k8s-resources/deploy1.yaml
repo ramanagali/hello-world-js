@@ -3,21 +3,38 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: gvr
-  name: gvr
+    app: hello-world
+  name: hello-world
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gvr
+      app: hello-world
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: gvr
+        app: hello-world
     spec:
       containers:
-        - image: ramanagali/hello-world-js:1.1.0
+        - image: ramanagali/hello-world-js:1.1.4
           name: hello-world-js
+          ports:
+            - containerPort: 3000
           resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hello-world
+  name: hello-world-svc
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: hello-world
+  type: NodePort
