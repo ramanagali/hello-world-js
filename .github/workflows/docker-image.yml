@@ -56,8 +56,11 @@ jobs:
         with:
           time: "10s"
 
-      - name: Check deploy
+      - name: Check hello-world-svc
         run: |
-          kubectl get no -o wide
           kubectl get svc -o wide
           kubectl get ep -o wide
+
+      - name: test hello-world
+        run: |
+          kubectl run -it --rm busybox --image=radial/busyboxplus --restart=Never -- curl hello-world-svc:3000
