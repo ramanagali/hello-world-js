@@ -45,3 +45,5 @@ jobs:
         run: |
           kubectl get nodes
           kubectl get po -A
+      - name: Deploy to minikube
+        run: kubectl apply -f deploy1.yaml
