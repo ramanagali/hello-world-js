@@ -20,42 +20,42 @@ jobs:
       - name: Show version number
         run: echo "Version is ${{ steps.appversion.outputs.version }}"
 
-      - name: NPM Test
+      # - name: NPM Test
+      #   run: |
+      #     npm start
+      #     npm test
+
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
+
+      - name: Push the tagged Docker image
+        run: docker push ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
+
+      - name: Setup Minikube
+        uses: manusa/actions-setup-minikube@v2.4.3
+        with:
+          minikube version: "v1.25.1"
+          kubernetes version: "v1.23.4"
+          # github token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Sleep for 20 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "20s"
+      - name: Interact with the cluster
         run: |
-          npm start
-          npm test
+          kubectl get nodes
+          kubectl get po -A
+      - name: Deployment to minikube cluster
+        run: kubectl apply -f ./k8s-resources/deploy1.yaml
 
-      # - name: Login to DockerHub Registry
-      #   run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - name: Sleep for 10 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: "10s"
 
-      # - name: Build the Docker image
-      #   run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
-
-      # - name: Push the tagged Docker image
-      #   run: docker push ${{secrets.DOCKER_USERNAME}}/hello-world-js:${{steps.appversion.outputs.version}}
-
-      # - name: Setup Minikube
-      #   uses: manusa/actions-setup-minikube@v2.4.3
-      #   with:
-      #     minikube version: "v1.25.1"
-      #     kubernetes version: "v1.23.4"
-      #     # github token: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Sleep for 20 seconds
-      #   uses: jakejarvis/wait-action@master
-      #   with:
-      #     time: "20s"
-      # - name: Interact with the cluster
-      #   run: |
-      #     kubectl get nodes
-      #     kubectl get po -A
-      # - name: Deployment to minikube cluster
-      #   run: kubectl apply -f ./k8s-resources/deploy1.yaml
-
-      # - name: Sleep for 10 seconds
-      #   uses: jakejarvis/wait-action@master
-      #   with:
-      #     time: "10s"
-
-      # - name: Check deploy
-      #   run: |
-      #     kubectl get deploy -o wide
+      - name: Check deploy
+        run: |
+          kubectl get deploy -o wide
