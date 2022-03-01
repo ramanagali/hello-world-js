@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const PORT = 3000;
-const HOST = 'localhost';
+const HOST = '0.0.0.0';
 
 const app = express();
 app.get('/', (_, res) => {
