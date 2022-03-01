@@ -64,6 +64,6 @@ jobs:
           kubectl get svc -o wide
           kubectl get ep -o wide
 
-      - name: test hello-world
-        run: |
-          curl $(kubectl get svc hello-world-svc -o jsonpath='{.spec.clusterIP}'): $(kubectl get svc hello-world-svc -o jsonpath='{.spec.ports[0].port}')
+      # - name: test hello-world
+      #   run: |
+      #     curl $(kubectl get svc hello-world-svc -o jsonpath='{.spec.clusterIP}'): $(kubectl get svc hello-world-svc -o jsonpath='{.spec.ports[0].port}')
