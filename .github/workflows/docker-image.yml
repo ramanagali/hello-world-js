@@ -48,8 +48,11 @@ jobs:
         run: |
           kubectl get nodes
           kubectl get po -A
+      - name: Update the deploy1.yaml with new Image
+        run: |
+          sed -e "s/tag/${{steps.appversion.outputs.version}}/g" ./k8s-resources/deploy1.yaml > ./k8s-resources/deploy1-upd.yaml
       - name: Deployment to minikube cluster
-        run: kubectl apply -f ./k8s-resources/deploy1.yaml
+        run: kubectl apply -f ./k8s-resources/deploy1-upd.yaml
 
       - name: Sleep for 10 seconds
         uses: jakejarvis/wait-action@master
