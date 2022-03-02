@@ -1,12 +1,13 @@
 {
   "name": "hello-world-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "hello-world-js",
   "main": "server.js",
   "scripts": {
     "start": "babel-node ./src/server.js",
     "test": "jest",
-    "build": "echo Test build completed! No package was uploaded"
+    "build": "echo Test build completed! No package was uploaded",
+    "preinstall": "npx npm-force-resolutions"
   },
   "keywords": [
     "node",
@@ -28,5 +29,8 @@
     "chai": "^4.3.6",
     "mocha": "^9.2.1",
     "request": "^2.88.2"
+  },
+  "resolutions": {
+    "glob-parent": ">=5.1.2"
   }
 }
