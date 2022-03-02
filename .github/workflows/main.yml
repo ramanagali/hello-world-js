@@ -37,7 +37,7 @@ jobs:
           npm run test
 
   # job
-  push_to_docker_hub:
+  build_push_image:
     name: Build & Push Docker Image to DockerHub
     runs-on: ubuntu-latest
     needs: [build_test]
@@ -85,10 +85,10 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ steps.projectinfo.outputs.version }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ steps.projectinfo.outputs.name }}:${{ steps.projectinfo.outputs.version }}
 
       - name: New Docker Image version
-        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ steps.projectinfo.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ steps.projectinfo.outputs.name }}:${{ steps.projectinfo.outputs.version }}
 
     outputs:
       name: ${{ steps.projectinfo.outputs.name }}
@@ -98,16 +98,16 @@ jobs:
   voln_scan_image:
     name: Scan Image for vulnerabilities
     runs-on: ubuntu-latest
-    needs: [push_to_docker_hub]
+    needs: [build_push_image]
 
     steps:
       - name: Docker Image to Scan
-        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ needs.push_to_docker_hub.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ needs.push_to_docker_hub.outputs.version }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -116,20 +116,42 @@ jobs:
 
   #job
   update_kube_yaml:
-    name: Update Kube YAML files with images
+    name: Update Deployment YAML file with images
     runs-on: ubuntu-latest
     needs: [voln_scan_image]
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
       - name: Update the deploy1.yaml with new Image
         run: |
           sed -e "s/tag/${{needs.push_to_docker_hub.steps.appversion.outputs.version}}/g" ./k8s-resources/deploy1.yaml > ./k8s-resources/deploy1-upd.yaml
+
+  # job
+  deploy_to_google_cloud:
+    name: Deploy to GCP
+    runs-on: ubuntu-latest
+    needs: [update_kube_yaml]
+
+    #https://github.com/YannMjl/nodejs-demo-app/blob/main/.github/workflows/main.yml
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@master
+        run: echo "Setup gcloud CLI"
+
+      - name: Deploy GKE
+        run: echo "Deploy GKE"
 
   # # job
   # minikube_deploy:
   #   name: Push Images to DockerHub
   #   runs-on: ubuntu-latest
-  #   needs: [push_to_docker_hub]
+  #   needs: [voln_scan_image]
 
   #   steps:
   #     - name: Setup Minikube
