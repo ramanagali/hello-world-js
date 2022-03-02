@@ -4,8 +4,8 @@
   "description": "hello-world-js",
   "main": "server.js",
   "scripts": {
-    "start": "node ./src/server.js",
-    "test": "mocha ./test/server.test.js",
+    "start": "babel-node ./src/server.js",
+    "test": "jest",
     "build": "echo Test build completed! No package was uploaded"
   },
   "keywords": [
@@ -17,7 +17,11 @@
   "author": "venkata ramana gali",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "babel-cli": "^6.26.0",
+    "babel-preset": "^1.1.7",
+    "babel-preset-env": "^1.7.0",
+    "express": "^4.17.3",
+    "jest": "^27.5.1"
   },
   "devDependencies": {
     "chai": "^4.3.6",
