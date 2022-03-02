@@ -142,7 +142,6 @@ jobs:
 
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
-        run: echo "Setup gcloud CLI"
 
       - name: Deploy GKE
         run: echo "Deploy GKE"
