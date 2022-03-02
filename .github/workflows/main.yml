@@ -46,27 +46,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Get package info
-        id: package
-        uses: codex-team/action-nodejs-package-info@v1
-
-      - name: Set step variables
+      - name: Set package info variables
         id: getproject
+        uses: codex-team/action-nodejs-package-info@v1
         with:
-          name: ${{ steps.package.outputs.name }}
-          version: ${{ steps.package.outputs.version }}
+          name: ${{ steps.getproject.outputs.name }}
+          version: ${{ steps.getproject.outputs.version }}
 
       - name: Get the output
         run: |
-          echo "name: ${{ steps.package.outputs.name }}"
-          echo "version: ${{ steps.package.outputs.version }}"
+          echo "name: ${{ steps.getproject.outputs.name }}"
+          echo "version: ${{ steps.getproject.outputs.version }}"
 
       # - name: Get version from package.json
       #   uses: tyankatsu0105/read-package-version-actions@v1
-      #   id: appversion
+      #   id: getproject
 
       - name: Package.json version number
-        run: echo "Version is ${{ steps.package.outputs.version }}"
+        run: echo "Version is ${{ steps.getproject.outputs.version }}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -86,10 +83,10 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.package.outputs.version }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.getproject.outputs.version }}
 
       - name: New Docker Image version
-        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.package.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.getproject.outputs.version }}
 
     outputs:
       name: ${{ steps.getproject.outputs.name }}
