@@ -37,7 +37,7 @@ jobs:
           npm run test
   # job
   push_to_docker_hub:
-    name: Push Images to DockerHub
+    name: Build & Push Docker Image to DockerHub
     runs-on: ubuntu-latest
     needs: [build_test]
 
@@ -82,6 +82,9 @@ jobs:
     needs: [push_to_docker_hub]
 
     steps:
+      - name: Docker Image to Scan
+        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
