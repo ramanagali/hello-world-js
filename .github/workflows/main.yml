@@ -46,28 +46,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: nodejs project information
+      - name: Set package info variables
         id: projectinfo
         uses: codex-team/action-nodejs-package-info@v1
-
-      - name: Set package info variables
-        id: getproject
-        uses: codex-team/action-nodejs-package-info@v1
+        env:
+          AUTHOR: ${{ steps.projectinfo.outputs.author }}
         with:
           name: ${{ steps.projectinfo.outputs.name }}
           version: ${{ steps.projectinfo.outputs.version }}
 
       - name: Get the output
         run: |
-          echo "name: ${{ steps.getproject.outputs.name }}"
-          echo "version: ${{ steps.getproject.outputs.version }}"
+          echo "name: ${{ steps.projectinfo.outputs.name }}"
+          echo "version: ${{ steps.projectinfo.outputs.version }}"
 
       # - name: Get version from package.json
       #   uses: tyankatsu0105/read-package-version-actions@v1
-      #   id: getproject
+      #   id: projectinfo
 
       - name: Package.json version number
-        run: echo "Version is ${{ steps.getproject.outputs.version }}"
+        run: echo "Version is ${{ steps.projectinfo.outputs.version }}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -87,14 +85,14 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.getproject.outputs.version }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ steps.projectinfo.outputs.version }}
 
       - name: New Docker Image version
-        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.getproject.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ steps.projectinfo.outputs.version }}
 
     outputs:
-      name: ${{ steps.getproject.outputs.name }}
-      version: ${{ steps.getproject.outputs.version }}
+      name: ${{ steps.projectinfo.outputs.name }}
+      version: ${{ steps.projectinfo.outputs.version }}
 
   # scan job
   voln_scan_image:
@@ -104,12 +102,12 @@ jobs:
 
     steps:
       - name: Docker Image to Scan
-        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ needs.push_to_docker_hub.outputs.version }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.outputs.version }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/${{ needs.push_to_docker_hub.outputs.name }}:${{ needs.push_to_docker_hub.outputs.version }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
