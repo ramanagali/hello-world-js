@@ -83,7 +83,7 @@ jobs:
 
     steps:
       - name: Docker Image to Scan
-        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.steps.appversion.outputs.version }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
