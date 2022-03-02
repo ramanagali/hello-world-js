@@ -35,6 +35,7 @@ jobs:
         run: |
           npm run build
           npm run test
+
   # job
   push_to_docker_hub:
     name: Build & Push Docker Image to DockerHub
@@ -45,12 +46,27 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Get version from package.json
-        uses: tyankatsu0105/read-package-version-actions@v1
-        id: appversion
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
+      - name: Set step variables
+        id: getproject
+        with:
+          name: ${{ steps.package.outputs.name }}
+          version: ${{ steps.package.outputs.version }}
+
+      - name: Get the output
+        run: |
+          echo "name: ${{ steps.package.outputs.name }}"
+          echo "version: ${{ steps.package.outputs.version }}"
+
+      # - name: Get version from package.json
+      #   uses: tyankatsu0105/read-package-version-actions@v1
+      #   id: appversion
 
       - name: Package.json version number
-        run: echo "Version is ${{ steps.appversion.outputs.version }}"
+        run: echo "Version is ${{ steps.package.outputs.version }}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -70,10 +86,14 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.package.outputs.version }}
 
       - name: New Docker Image version
-        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.package.outputs.version }}
+
+    outputs:
+      name: ${{ steps.getproject.outputs.name }}
+      version: ${{ steps.getproject.outputs.version }}
 
   # scan job
   voln_scan_image:
@@ -83,12 +103,12 @@ jobs:
 
     steps:
       - name: Docker Image to Scan
-        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.steps.appversion.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.outputs.version }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.steps.appversion.outputs.version }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ needs.push_to_docker_hub.outputs.version }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
