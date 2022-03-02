@@ -46,12 +46,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: nodejs project information
+        id: projectinfo
+        uses: codex-team/action-nodejs-package-info@v1
+
       - name: Set package info variables
         id: getproject
         uses: codex-team/action-nodejs-package-info@v1
         with:
-          name: ${{ steps.getproject.outputs.name }}
-          version: ${{ steps.getproject.outputs.version }}
+          name: ${{ steps.projectinfo.outputs.name }}
+          version: ${{ steps.projectinfo.outputs.version }}
 
       - name: Get the output
         run: |
