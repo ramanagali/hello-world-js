@@ -42,14 +42,14 @@ jobs:
     needs: [build_test]
 
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v2
 
       - name: Get version from package.json
         uses: tyankatsu0105/read-package-version-actions@v1
         id: appversion
 
-      - name: package.json version number
+      - name: Package.json version number
         run: echo "Version is ${{ steps.appversion.outputs.version }}"
 
       - name: Set up QEMU

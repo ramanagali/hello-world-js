@@ -14,10 +14,11 @@ COPY --chown=node:node . /usr/src/app
 RUN npm install -g npm-check-updates \
     ncu -u \
     npm install \
+    npm install jest \
     npm install express \
     npm install babel-cli \
     npm install babel-preset \
-    npm install babel-preset-env
+    npm install babel-preset-env 
 
 # Install only production dependencies
 RUN npm ci --only=production
