@@ -1,12 +1,19 @@
 {
   "name": "hello-world-js",
-  "version": "1.1.5",
+  "version": "1.0.0",
   "description": "hello-world-js",
   "main": "server.js",
   "scripts": {
     "start": "node ./src/server.js",
-    "test": "mocha ./test/server.test.js"
+    "test": "mocha ./test/server.test.js",
+    "build": "echo Test build completed! No package was uploaded"
   },
+  "keywords": [
+    "node",
+    "nodejs",
+    "express",
+    "babel"
+  ],
   "author": "venkata ramana gali",
   "license": "ISC",
   "dependencies": {
