@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: setup node
+      - name: Setup node
         uses: actions/setup-node@master
         with:
           node-version: ${{ matrix.node-version }}
@@ -31,7 +31,7 @@ jobs:
           npm ci
 
       # build and test the apps
-      - name: build & test
+      - name: Build & test
         run: |
           npm run build
           npm run test
@@ -73,7 +73,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
 
       - name: New Docker Image version
-        run: ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
+        run: echo ${{ secrets.DOCKER_USERNAME }}/hello-world-js:${{ steps.appversion.outputs.version }}
 
       # - name: Login to DockerHub Registry
       #   run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
