@@ -38,13 +38,6 @@ jobs:
         run: |
           npm run build
           npm run test
-
-      - name: Send GitHub Action trigger data to Slack workflow
-        id: slack
-        uses: slackapi/slack-github-action@v1.18.0
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
   # job
   build_push_image:
     name: Build & Push Docker Image to DockerHub
