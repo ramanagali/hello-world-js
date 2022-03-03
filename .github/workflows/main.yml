@@ -128,6 +128,9 @@ jobs:
         run: |
           sed -e "s/tag/${{needs.push_to_docker_hub.steps.appversion.outputs.version}}/g" ./k8s-resources/deploy1.yaml > ./k8s-resources/deploy1-upd.yaml
 
+      - name: Verify deploy1.yaml image
+        run: cat ./k8s-resources/deploy1-upd.yaml | grep -i image
+
   # job
   deploy_to_google_cloud:
     name: Deploy to GCP
