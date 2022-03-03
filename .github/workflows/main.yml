@@ -43,17 +43,6 @@ jobs:
           npm run build
           npm run test
 
-      # - name: Slack Notification
-      #   uses: rtCamp/action-slack-notify@v2
-      #   env:
-      #     SLACK_CHANNEL: ${{ secrets.CHANNEL_ID }}
-      #     SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-      #     SLACK_ICON: https://github.com/rtCamp.png?size=48
-      #     SLACK_MESSAGE: "Hello-world-js Build & test succeded :rocket:"
-      #     SLACK_TITLE: Hello-world-js Build & test
-      #     SLACK_USERNAME: ci-cd-webhook
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-
       # - uses: ravsamhq/notify-slack-action@v1
       #   if: always()
       #   with:
@@ -81,6 +70,17 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
         if: always() # Pick up events even if the job fails or is canceled.
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: ${{ secrets.CHANNEL_ID }}
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: "${{ job.name }} - ${{ job.status }}"
+          SLACK_TITLE: ${{ job.name }}
+          SLACK_USERNAME: ci-cd-webhook
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   # job
   build_push_image:
