@@ -39,17 +39,23 @@ jobs:
           npm run build
           npm run test
 
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_CHANNEL: ${{ secrets.CHANNEL_ID }}
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Hello-world-js Build & test succeded :rocket:"
-          SLACK_TITLE: Hello-world-js Build & test
-          SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      # - name: Slack Notification
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_CHANNEL: ${{ secrets.CHANNEL_ID }}
+      #     SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+      #     SLACK_ICON: https://github.com/rtCamp.png?size=48
+      #     SLACK_MESSAGE: "Hello-world-js Build & test succeded :rocket:"
+      #     SLACK_TITLE: Hello-world-js Build & test
+      #     SLACK_USERNAME: ci-cd-webhook
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }} # required
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
   # job
   build_push_image:
     name: Build & Push Docker Image to DockerHub
@@ -100,6 +106,13 @@ jobs:
       - name: New Docker Image version
         run: echo ${{ secrets.DOCKER_USERNAME }}/${{ steps.projectinfo.outputs.name }}:${{ steps.projectinfo.outputs.version }}
 
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }} # required
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+
     outputs:
       name: ${{ steps.projectinfo.outputs.name }}
       version: ${{ steps.projectinfo.outputs.version }}
@@ -123,6 +136,13 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL"
+
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }} # required
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
   #job
   update_kube_yaml:
     name: Update Deployment YAML file with images
@@ -139,6 +159,13 @@ jobs:
 
       - name: Verify deploy1.yaml image
         run: cat ./k8s-resources/deploy1-upd.yaml | grep -i image
+
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }} # required
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
 
   # job
   deploy_to_google_cloud:
@@ -157,3 +184,10 @@ jobs:
 
       - name: Deploy GKE
         run: echo "Deploy GKE"
+
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }} # required
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
