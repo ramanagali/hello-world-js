@@ -17,7 +17,7 @@ jobs:
         node-version: [14.x]
 
     # Run build and test only if the commit message says build
-    if: "contains(github.event.commits[0].message, '[build]')"
+    if: "contains(github.event.commits[0].message, 'build')"
 
     steps:
       - uses: actions/checkout@v2
