@@ -75,7 +75,7 @@ jobs:
         with:
           channel: "#${{ secrets.CHANNEL_ID }}"
           status: ${{ job.status }}
-          success_text: "${{ github.action }} - ${{ github.event_name }} - ${{ job.status }}"
+          success_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build completed successfully"
           failure_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed"
           cancelled_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build was cancelled"
           fields: |
