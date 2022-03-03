@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
 jobs:
   # job1
   build_test:
@@ -57,13 +61,25 @@ jobs:
       #   env:
       #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
 
-      - uses: 8398a7/action-slack@v3
+      # - uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #   if: always() # Pick up events even if the job fails or is canceled.
+
+      - name: Build notification
+        if: always()
+        uses: adamkdean/simple-slack-notify@master
         with:
+          channel: "#ci-cd"
           status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: always() # Pick up events even if the job fails or is canceled.
+          success_text: "Build (#${env.GITHUB_RUN_NUMBER}) completed successfully"
+          failure_text: "Build (#${env.GITHUB_RUN_NUMBER}) failed"
+          cancelled_text: "Build (#${env.GITHUB_RUN_NUMBER}) was cancelled"
+          fields: |
+            [{ "title": "Action URL", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"}]
 
   # job
   build_push_image:
@@ -114,14 +130,6 @@ jobs:
 
       - name: New Docker Image version
         run: echo ${{ secrets.DOCKER_USERNAME }}/${{ steps.projectinfo.outputs.name }}:${{ steps.projectinfo.outputs.version }}
-
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: always() # Pick up events even if the job fails or is canceled.
 
     outputs:
       name: ${{ steps.projectinfo.outputs.name }}
