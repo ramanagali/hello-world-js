@@ -129,10 +129,22 @@ jobs:
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed -e "s/tag/${{needs.push_to_docker_hub.steps.appversion.outputs.version}}/g" ./k8s-resources/deploy1.yaml > ./k8s-resources/deploy1-upd.yaml
+          sed -e "s/tag/${{needs.push_to_docker_hub.steps.appversion.outputs.version}}/g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
 
       - name: Verify deploy1.yaml image
-        run: cat ./k8s-resources/deploy1-upd.yaml | grep -i image
+        run: cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
+
+      - name: Setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+
+      - name: commit
+        run: |
+          git add ./clusters/k8s-cluster/default/deploy1.yaml
+          git commit -m "updated image version ${{needs.push_to_docker_hub.steps.appversion.outputs.version}}"
+          git push origin master
 
   # job
   deploy_to_google_cloud:
