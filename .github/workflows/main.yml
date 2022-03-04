@@ -129,7 +129,7 @@ jobs:
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed -e "s/tag/${{needs.push_to_docker_hub.steps.appversion.outputs.version}}/g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed -e "s/tag/${{ needs.build_push_image.outputs.version }}/g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
 
       - name: Verify deploy1.yaml image
         run: cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
@@ -144,8 +144,8 @@ jobs:
       - name: Setup git config
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git config user.name "GitHub Actions"
-          git config user.email "<>"
+          git config user.name "ramanagali"
+          git config user.email "ramana.gali@gmail.com"
 
       - name: commit
         run: |
