@@ -127,6 +127,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Setup git config
+        run: |
+          mkdir -p ./clusters/k8s-cluster/default
+
       - name: Update the deploy1.yaml with new Image
         run: |
           sed -e "s/tag/${{ needs.build_push_image.outputs.version }}/g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
@@ -149,7 +153,7 @@ jobs:
 
       - name: commit
         run: |
-          git add ./clusters/k8s-cluster/default/deploy1.yaml
+          git add .
           git commit -m "updated image version ${{needs.push_to_docker_hub.steps.appversion.outputs.version}}"
           git push origin master
 
