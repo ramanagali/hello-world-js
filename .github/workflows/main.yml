@@ -134,6 +134,13 @@ jobs:
       - name: Verify deploy1.yaml image
         run: cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
 
+  # job
+  trigger_flux:
+    name: Push Yaml and trigger Flux
+    runs-on: ubuntu-latest
+    needs: [update_kube_yaml]
+
+    steps:
       - name: Setup git config
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
@@ -146,20 +153,20 @@ jobs:
           git commit -m "updated image version ${{needs.push_to_docker_hub.steps.appversion.outputs.version}}"
           git push origin master
 
-  # job
-  deploy_to_google_cloud:
-    name: Deploy to GCP
-    runs-on: ubuntu-latest
-    needs: [update_kube_yaml]
+  # # job
+  # deploy_to_google_cloud:
+  #   name: Deploy to GCP
+  #   runs-on: ubuntu-latest
+  #   needs: [update_kube_yaml]
 
-    #https://github.com/YannMjl/nodejs-demo-app/blob/main/.github/workflows/main.yml
+  #   #https://github.com/YannMjl/nodejs-demo-app/blob/main/.github/workflows/main.yml
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v2
 
-      - name: Setup gcloud CLI
-        uses: google-github-actions/setup-gcloud@master
+  #     - name: Setup gcloud CLI
+  #       uses: google-github-actions/setup-gcloud@master
 
-      - name: Deploy GKE
-        run: echo "Deploy GKE"
+  #     - name: Deploy GKE
+  #       run: echo "Deploy GKE"
