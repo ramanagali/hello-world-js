@@ -43,45 +43,6 @@ jobs:
           npm run build
           npm run test
 
-      # - name: Slack Notification
-      #   uses: rtCamp/action-slack-notify@v2
-      #   env:
-      #     SLACK_CHANNEL: ${{ secrets.CHANNEL_ID }}
-      #     SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-      #     SLACK_ICON: https://github.com/rtCamp.png?size=48
-      #     SLACK_MESSAGE: "Hello-world-js Build & test succeded :rocket:"
-      #     SLACK_TITLE: Hello-world-js Build & test
-      #     SLACK_USERNAME: ci-cd-webhook
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      # - uses: ravsamhq/notify-slack-action@v1
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }} # required
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-
-      # - uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-      #   if: always() # Pick up events even if the job fails or is canceled.
-
-      - name: Slack Notification
-        if: always()
-        uses: edge/simple-slack-notify@master
-        with:
-          channel: "#${{ secrets.CHANNEL_ID }}"
-          status: ${{ job.status }}
-          success_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build completed successfully"
-          failure_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed"
-          cancelled_text: "${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build was cancelled"
-          fields: |
-            [{ "title": "Repository", "value": "${env.GITHUB_REPOSITORY}", "short": true },
-            { "title": "Branch", "value": "${env.BRANCH}", "short": true }]
-
   # job
   build_push_image:
     name: Build & Push Docker Image to DockerHub
@@ -155,6 +116,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL"
+
   #job
   update_kube_yaml:
     name: Update Deployment YAML file with images
