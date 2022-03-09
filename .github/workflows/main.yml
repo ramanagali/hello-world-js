@@ -145,12 +145,18 @@ jobs:
     needs: [update_kube_yaml]
 
     steps:
-      - name: commit
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          # Optional. Commit message for the created commit.
-          # Defaults to "Apply automatic changes"
-          commit_message: Automated Change
+      # - name: commit
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     # Optional. Commit message for the created commit.
+      #     # Defaults to "Apply automatic changes"
+      #     commit_message: Automated Change
+      - name: Commit YAML
+        run: |
+          git config --global user.name 'ramanagali'
+          git config --global user.email 'ramanagali@users.noreply.github.com'
+          git commit -am "Build updated yaml "
+          git push
 
   # # job
   # deploy_to_google_cloud:
