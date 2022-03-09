@@ -127,16 +127,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Update Flux files
+      - name: Create default namespace folder if not exists
         run: |
           mkdir -p ./clusters/k8s-cluster/default
 
-      - name: Image Version
+      - name: Print Image Version
         run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed -e "s/tag/${{ needs.build_push_image.outputs.version }}" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed -i -e "s|tag|${{ needs.build_push_image.outputs.version }}|g" > ./clusters/k8s-cluster/default/deploy1.yaml
 
       - name: Verify deploy1.yaml image
         run: cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
