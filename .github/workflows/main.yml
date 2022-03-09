@@ -145,17 +145,23 @@ jobs:
     needs: [update_kube_yaml]
 
     steps:
-      - name: Setup git config
-        run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git config user.name "ramanagali"
-          git config user.email "ramana.gali@gmail.com"
+      # - name: Setup git config
+      #   run: |
+      #     # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+      #     git config user.name "ramanagali"
+      #     git config user.email "ramana.gali@gmail.com"
 
-      - name: commit
-        run: |
-          git add .
-          git commit -m "updated image version ${{needs.push_to_docker_hub.steps.appversion.outputs.version}}"
-          git push origin master
+      # - name: commit
+      #   run: |
+      #     git add .
+      #     git commit -m "updated image version ${{needs.push_to_docker_hub.steps.appversion.outputs.version}}"
+      #     git push origin master
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          # Optional. Commit message for the created commit.
+          # Defaults to "Apply automatic changes"
+          commit_message: Automated Change
+          file_pattern: *.yaml
 
   # # job
   # deploy_to_google_cloud:
