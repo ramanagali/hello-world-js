@@ -151,12 +151,21 @@ jobs:
       #     # Optional. Commit message for the created commit.
       #     # Defaults to "Apply automatic changes"
       #     commit_message: Automated Change
+      - name: Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)
+
       - name: Commit YAML
         run: |
-          git config --global user.name 'ramanagali'
-          git config --global user.email 'ramanagali@users.noreply.github.com'
-          git commit -am "Build updated yaml "
-          git push
+          if ! git diff --no-ext-diff --quiet --exit-code; then
+            git add .
+            git config --local user.email "ramanagali@gmail.com"
+            git config --local user.name "ramanagali"
+            git commit -a -m "build from github action"
+            git remote set-url origin "$(git config --get remote.origin.url | sed 's#http.*com/#git@github.com:#g')"
+            git add .
+            git push
+          fi
 
   # # job
   # deploy_to_google_cloud:
