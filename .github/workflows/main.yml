@@ -133,7 +133,8 @@ jobs:
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed -e "s/tag/${{ needs.build_push_image.outputs.version }}/g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
+          sed -e "s/imgURL/${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}/g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
 
       - name: Verify deploy1.yaml image
         run: cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
@@ -151,9 +152,6 @@ jobs:
       #     # Optional. Commit message for the created commit.
       #     # Defaults to "Apply automatic changes"
       #     commit_message: Automated Change
-      - name: Check for modified files
-        id: git-check
-        run: echo ::set-output name=modified::$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)
 
       - name: Commit YAML - Trigger flux CD
         run: |
@@ -162,12 +160,8 @@ jobs:
           git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
           git pull github ${GITHUB_REF} --ff-only
           git add .
-          if [ -z "$(git status --porcelain)" ]; then
-            exit 0
-          fi
-          git commit -m "build updated yaml"
+          git commit -m "Build from Github Actions" 
           git push github HEAD:${GITHUB_REF}
-
   # # job
   # deploy_to_google_cloud:
   #   name: Deploy to GCP
