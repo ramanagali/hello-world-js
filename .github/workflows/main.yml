@@ -121,7 +121,7 @@ jobs:
   update_kube_yaml:
     name: Update Deployment YAML file with images
     runs-on: ubuntu-latest
-    needs: [voln_scan_image]
+    needs: [build_push_image, voln_scan_image]
 
     steps:
       - name: Checkout repo
