@@ -151,8 +151,7 @@ jobs:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
           commit_message: Automated Change
-          file_pattern: *.yaml
-     
+
   # # job
   # deploy_to_google_cloud:
   #   name: Deploy to GCP
