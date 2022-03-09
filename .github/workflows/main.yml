@@ -139,7 +139,8 @@ jobs:
           sed -i -e "s|tag|${{ needs.build_push_image.outputs.version }}|g" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
 
       - name: Verify deploy1.yaml image
-        run: cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
+        run: |
+          cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
 
   # job
   trigger_flux:
