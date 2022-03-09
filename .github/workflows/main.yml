@@ -143,7 +143,7 @@ jobs:
         run: |
           cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
 
-      - name: commit
+      - name: Push Yaml and trigger Flux
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           # Optional. Commit message for the created commit.
