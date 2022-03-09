@@ -155,17 +155,18 @@ jobs:
         id: git-check
         run: echo ::set-output name=modified::$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)
 
-      - name: Commit YAML
+      - name: Commit YAML - Trigger flux CD
         run: |
-          if ! git diff --no-ext-diff --quiet --exit-code; then
-            git add .
-            git config --local user.email "ramanagali@gmail.com"
-            git config --local user.name "ramanagali"
-            git commit -a -m "build from github action"
-            git remote set-url origin "$(git config --get remote.origin.url | sed 's#http.*com/#git@github.com:#g')"
-            git add .
-            git push
+          git config --local user.email "$(git log --format='%ae' HEAD^!)"
+          git config --local user.name "$(git log --format='%an' HEAD^!)"
+          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          git pull github ${GITHUB_REF} --ff-only
+          git add .
+          if [ -z "$(git status --porcelain)" ]; then
+            exit 0
           fi
+          git commit -m "build updated yaml"
+          git push github HEAD:${GITHUB_REF}
 
   # # job
   # deploy_to_google_cloud:
