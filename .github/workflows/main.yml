@@ -157,15 +157,32 @@ jobs:
       #     # Defaults to "Apply automatic changes"
       #     commit_message: Automated Change
 
-      - name: Commit YAML - Trigger flux CD
+      # - name: Commit YAML - Trigger flux CD
+      #   run: |
+      #     git config --local user.email "$(git log --format='%ae' HEAD^!)"
+      #     git config --local user.name "$(git log --format='%an' HEAD^!)"
+      #     git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+      #     git pull github ${GITHUB_REF} --ff-only
+      #     git add .
+      #     git commit -m "Build from Github Actions"
+      #     git push github HEAD:${GITHUB_REF}
+
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+
+      - name: Commit files
         run: |
-          git config --local user.email "$(git log --format='%ae' HEAD^!)"
-          git config --local user.name "$(git log --format='%an' HEAD^!)"
-          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
-          git pull github ${GITHUB_REF} --ff-only
+          git config --local user.email "ramana.gali@gmail.com"
+          git config --local user.name "ramanagali"
           git add .
-          git commit -m "Build from Github Actions"
-          git push github HEAD:${GITHUB_REF}
+          git commit -m "build changes" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
 
   # # job
   # deploy_to_google_cloud:
