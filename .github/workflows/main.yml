@@ -138,7 +138,7 @@ jobs:
       - name: Update the deploy1.yaml with new Image
         run: |
           IMGPATH=${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
-          sed "s/IMGPATH/IMGPATH" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed "s/IMGPATH/$IMGPATH" ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
           ls -l ./clusters/k8s-cluster/default
 
       - name: Verify deploy1.yaml image
