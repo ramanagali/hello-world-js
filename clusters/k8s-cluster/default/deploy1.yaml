@@ -18,7 +18,7 @@ spec:
         app: hello-world
     spec:
       containers:
-        - image: ramanagali/hello-world-js:1.0.2
+        - image: $IMGPATH
           name: hello-world-js
           ports:
             - containerPort: 3000
