@@ -132,22 +132,19 @@ jobs:
           mkdir -p ./clusters/k8s-cluster/default
 
       - name: Print Image Version
-        run: echo {{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
+        run: |
+          export IMGPATH=${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
+          echo $IMGPATH
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed 's/TAG/${{ needs.build_push_image.outputs.version }}/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed 's/IMGPATH/$IMGPATH/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
           ls -l ./clusters/k8s-cluster/default
 
       - name: Verify deploy1.yaml image
         run: |
           cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
 
-      # - name: Commit YAML and trigger Flux
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     branch: master
-      #     commit_message: release deployment trigger - $(date '+%d-%m-%Y %H:%M:%S')
       - name: Commit YAML - Trigger flux CD
         run: |
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
@@ -157,55 +154,3 @@ jobs:
           git add .
           git commit -m "Build trigger from Github Actions"
           git push github HEAD:${GITHUB_REF}
-
-  # job
-  # trigger_flux:
-  #   name: Push Yaml and trigger Flux
-  #   runs-on: ubuntu-latest
-  #   needs: [update_kube_yaml]
-
-  #   steps:
-  #     - name: Commit YAML - Trigger flux CD
-  #       run: |
-  #         git config --local user.email "$(git log --format='%ae' HEAD^!)"
-  #         git config --local user.name "$(git log --format='%an' HEAD^!)"
-  #         git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
-  #         git pull github ${GITHUB_REF} --ff-only
-  #         git add .
-  #         git commit -m "Build from Github Actions"
-  #         git push github HEAD:${GITHUB_REF}
-
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-  #         fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-
-  #     - name: Commit files
-  #       run: |
-  #         git config --local user.email "ramana.gali@gmail.com"
-  #         git config --local user.name "ramanagali"
-  #         git add .
-  #         git commit -m "build changes" -a
-  #     - name: Push changes
-  #       uses: ad-m/github-push-action@master
-  #       with:
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         branch: ${{ github.ref }}
-
-  # # job
-  # deploy_to_google_cloud:
-  #   name: Deploy to GCP
-  #   runs-on: ubuntu-latest
-  #   needs: [update_kube_yaml]
-
-  #   #https://github.com/YannMjl/nodejs-demo-app/blob/main/.github/workflows/main.yml
-
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v2
-
-  #     - name: Setup gcloud CLI
-  #       uses: google-github-actions/setup-gcloud@master
-
-  #     - name: Deploy GKE
-  #       run: echo "Deploy GKE"
