@@ -132,22 +132,22 @@ jobs:
           mkdir -p ./clusters/k8s-cluster/default
 
       - name: Print Image Version
-        run: echo ${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
+        run: |
+          export IMGPATH=${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
+          echo $IMGPATH
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed 's/tag/${{ needs.build_push_image.outputs.version }}/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed 's/IMGPATH/$IMGPATH/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
           ls -l ./clusters/k8s-cluster/default
 
       - name: Verify deploy1.yaml image
         run: |
           cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
 
-      - name: Push Yaml and trigger Flux
+      - name: Commit Yaml and trigger Flux
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          # Optional. Commit message for the created commit.
-          # Defaults to "Apply automatic changes"
           commit_message: Build Github action trigger - $(date '+%d-%m-%Y %H:%M:%S')
 
   # job
