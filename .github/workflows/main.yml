@@ -132,12 +132,11 @@ jobs:
           mkdir -p ./clusters/k8s-cluster/default
 
       - name: Print Image Version
-        run: |
-          echo {{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
+        run: echo {{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed 's/IMGPATH/{{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed 's/TAG/${{ needs.build_push_image.outputs.version }}/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
           ls -l ./clusters/k8s-cluster/default
 
       - name: Verify deploy1.yaml image
@@ -156,7 +155,7 @@ jobs:
           git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
           git pull github ${GITHUB_REF} --ff-only
           git add .
-          git commit -m "Build from Github Actions"
+          git commit -m "Build trigger from Github Actions"
           git push github HEAD:${GITHUB_REF}
 
   # job
