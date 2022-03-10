@@ -20,8 +20,8 @@ jobs:
       matrix:
         node-version: [14.x]
 
-    # Run build and test only if the commit message says build
-    if: "contains(github.event.commits[0].message, 'build')"
+    # Run build and test only if the commit message says release
+    if: "contains(github.event.commits[0].message, 'release')"
 
     steps:
       - uses: actions/checkout@v2
@@ -133,22 +133,21 @@ jobs:
 
       - name: Print Image Version
         run: |
-          export IMGPATH=${{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
-          echo $IMGPATH
+          echo {{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}
 
       - name: Update the deploy1.yaml with new Image
         run: |
-          sed 's/IMGPATH/$IMGPATH/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
+          sed 's/IMGPATH/{{ secrets.DOCKER_USERNAME }}/${{ needs.build_push_image.outputs.name }}:${{ needs.build_push_image.outputs.version }}/g' ./k8s-resources/deploy1.tmpl > ./clusters/k8s-cluster/default/deploy1.yaml
           ls -l ./clusters/k8s-cluster/default
 
       - name: Verify deploy1.yaml image
         run: |
           cat ./clusters/k8s-cluster/default/deploy1.yaml | grep -i image
 
-      - name: Commit Yaml and trigger Flux
+      - name: Commit YAML and trigger Flux
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Build Github action trigger - $(date '+%d-%m-%Y %H:%M:%S')
+          commit_message: release deployment trigger - $(date '+%d-%m-%Y %H:%M:%S')
 
   # job
   # trigger_flux:
