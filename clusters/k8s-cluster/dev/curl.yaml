@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: curldeploy
-  namespace: default
+  namespace: dev
 spec:
   selector:
     matchLabels:
