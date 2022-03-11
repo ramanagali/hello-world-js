@@ -1,6 +1,6 @@
 {
   "name": "hello-world-js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "hello-world-js",
   "main": "server.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "express",
     "babel"
   ],
-  "author": "venkata ramana gali",
+  "author": "Venkata Ramana Gali",
   "license": "ISC",
   "dependencies": {
     "babel-cli": "^6.26.0",
