@@ -45,21 +45,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-ingress
-  namespace: default
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  # tls:
-  #   - hosts:
-  #       - learnwithgvr.com
-  #     secretName: sec-gvr
   rules:
-    - host: learnwithgvr.com
-      http:
+    - http:
         paths:
-          - pathType: Prefix
-            path: /
+          - path: /hw
+            pathType: Prefix
             backend:
               service:
                 name: hello-world-svc
