@@ -51,10 +51,11 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - http:
+    - host: learnwithgvr.com
+      http:
         paths:
-          - path: /hello-world-js
-            pathType: Prefix
+          - pathType: Prefix
+            path: /hw
             backend:
               service:
                 name: hello-world-svc
