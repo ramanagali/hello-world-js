@@ -19,7 +19,7 @@ spec:
         app: hello-world
     spec:
       containers:
-        - image: ramanagali/hello-world-js:1.0.0
+        - image: ramanagali/hello-world-js:1.0.1
           name: hello-world-js
           ports:
             - containerPort: 3000
@@ -39,4 +39,25 @@ spec:
       targetPort: 3000
   selector:
     app: hello-world
-  type: NodePort
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: learnwithgvr.io
+      http:
+        paths:
+          - pathType: Prefix
+            path: /hw
+            backend:
+              service:
+                name: hello-world-svc
+                port:
+                  number: 3000
