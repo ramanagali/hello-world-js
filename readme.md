@@ -15,7 +15,7 @@
 4. Install FluxV2
 
 ### Design
-![cicd_gitops drawio](https://user-images.githubusercontent.com/55323295/158052181-30ffa0ab-5302-44f9-849e-3fa5f182a4ea.png)
+![cicd_gitops drawio](https://user-images.githubusercontent.com/55323295/158329788-da6e83ec-dd43-4a87-9fee-f374983a5737.png)
 
 <hr>
 
